@@ -1,19 +1,63 @@
 const { expect } = require("chai");
+const { keccak256 } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+describe("AccessControl Contract", function () {
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+  // const MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+  let RoleTestToken;
+  let roleTestToken;
+  let owner;
+  let addr1;
+  let addr2;
+  let addrs;
+  let ADMIN_ROLE;
+  let MINTER_ROLE;
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+  beforeEach(async function () {
+    RoleTestToken = await ethers.getContractFactory("RoleTestToken");
+    [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    roleTestToken = await RoleTestToken.deploy();
+    await roleTestToken.deployed();
+    ADMIN_ROLE = await roleTestToken.ADMIN_ROLE();
+    MINTER_ROLE = await roleTestToken.MINTER_ROLE();
+  
+  });
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+  describe("Role Assignments", function () {
+    it("ADMIN can add Role to an User", async function () {
+      await roleTestToken.addRoleToAccount(MINTER_ROLE, addr1.address)
+      expect(await roleTestToken.hasRole(MINTER_ROLE, addr1.address)).to.equal(true);
+    });
+
+    it("ADMIN can remove Role from an User", async function () {
+      await roleTestToken.addRoleToAccount(MINTER_ROLE, addr1.address)
+      await roleTestToken.removeRoleFromAccount(MINTER_ROLE, addr1.address)
+      expect(await roleTestToken.hasRole(MINTER_ROLE, addr1.address)).to.equal(false);
+    });
+
+    it("non-ADMIN can't add Role from an User", async function () {
+
+      // await roleTestToken.addRoleToAccount(MINTER_ROLE, addr1.address)
+      
+      expect(
+        roleTestToken.connect(addr2).addRoleToAccount(MINTER_ROLE, addr1.address)
+        ).to.be.revertedWith(
+          `AccessControl: account ${addr2.address} is missing role ${ADMIN_ROLE}`
+        );
+      
+        await roleTestToken.connect(owner);
+    });
+
+    // Can't make it work!!!
+    // it("non-ADMIN can't remove Role from an User", async function () {
+
+    //   await roleTestToken.addRoleToAccount(MINTER_ROLE, addr1.address);
+    //   await roleTestToken.connect(addr2);
+    //   expect(roleTestToken.removeRoleFromAccount(MINTER_ROLE, addr1.address)).to.be.reverted();
+
+    // });
+
   });
 });
