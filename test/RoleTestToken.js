@@ -123,9 +123,20 @@ describe("AccessControl Contract", function () {
         ).to.be.equal("Hello Everyone!");
     });
 
-    //TODO: Test that an non-authorized address can't send a message reverted with "This account isn't authorized to send a message!"
+    it("non-authorized address can't send a message", async function () {
+      expect(
+        roleTestToken.connect(addr1).sendMessageToEveryone()
+        ).to.be.revertedWith("This account isn't authorized to send a message!");
+    });
 
-    //TODO: Test that a banned address cannot send a message and is revertedwith "This account is Banned"
+    it("Banned address cannot send a message", async function () {
+      await roleTestToken.addRoleToAccount(USER_ROLE, addr1.address);
+      await roleTestToken.addRoleToAccount(MODERATOR_ROLE, addr1.address);
+      await roleTestToken.connect(addr1).banUser(addr2.address);
+      expect(
+        roleTestToken.connect(addr2).sendMessageToEveryone()
+        ).to.be.revertedWith("This account is Banned");
+    });
 
   });
 });
