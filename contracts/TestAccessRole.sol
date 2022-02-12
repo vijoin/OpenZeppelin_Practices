@@ -12,7 +12,7 @@ contract RoleTestToken is ERC20, AccessControl {
     bytes32 public constant MODERATOR_ROLE = keccak256("MODERATOR_ROLE");
     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
 
-    mapping (address => bool) bannedUsers;
+    mapping (address => bool) public bannedUsers;
 
     constructor() ERC20("Role Test Token", "RTT") {
         _setupRole(ADMIN_ROLE, msg.sender);
