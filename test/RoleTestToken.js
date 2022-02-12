@@ -44,7 +44,7 @@ describe("AccessControl Contract", function () {
         roleTestToken.connect(addr2).grantRole(MINTER_ROLE, addr1.address)
       ).to.be.reverted;
         // ).to.be.revertedWith(
-        //   `AccessControl: account ${addr2} is missing role ${ADMIN_ROLE}`
+        //   `AccessControl: account ${addr2} is missing role ${DEFAULT_ADMIN_ROLE}`
         // );
     });
 
@@ -54,7 +54,9 @@ describe("AccessControl Contract", function () {
         roleTestToken.connect(addr2).revokeRole(MINTER_ROLE, addr1.address)
         ).to.be.reverted;
     });
+  });
 
+  describe("Banning", function () {
     it("Moderator can ban an address", async function () {
       await roleTestToken.grantRole(MODERATOR_ROLE, addr1.address);
       await roleTestToken.connect(addr1).banUser(addr2.address);
@@ -93,8 +95,10 @@ describe("AccessControl Contract", function () {
       //   `AccessControl: account ${addr3.address} is missing role ${MODERATOR_ROLE}`
         // );
     });
+  });
 
-    it("Address with ADMIN_ROLE can send a message", async function () {
+  describe("Send Message", function () {
+    it("Address with DEFAULT_ADMIN_ROLE can send a message", async function () {
       expect(
         await roleTestToken.sendMessageToEveryone()
         ).to.be.equal("Hello Everyone!");
@@ -135,6 +139,5 @@ describe("AccessControl Contract", function () {
         roleTestToken.connect(addr2).sendMessageToEveryone()
         ).to.be.revertedWith("This account is Banned");
     });
-
   });
 });
