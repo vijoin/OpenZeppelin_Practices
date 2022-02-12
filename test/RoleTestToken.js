@@ -13,6 +13,7 @@ describe("AccessControl Contract", function () {
   let ADMIN_ROLE;
   let MINTER_ROLE;
   let MODERATOR_ROLE;
+  let USER_ROLE;
 
   beforeEach(async function () {
     RoleTestToken = await ethers.getContractFactory("RoleTestToken");
@@ -21,7 +22,7 @@ describe("AccessControl Contract", function () {
     ADMIN_ROLE = await roleTestToken.ADMIN_ROLE();
     MINTER_ROLE = await roleTestToken.MINTER_ROLE();
     MODERATOR_ROLE = await roleTestToken.MODERATOR_ROLE();
-  
+    USER_ROLE = await roleTestToken.USER_ROLE();
   });
 
   describe("Role Assignments", function () {
@@ -82,7 +83,6 @@ describe("AccessControl Contract", function () {
         // );
     });
 
-    //TODO: Test that a non-Moderator can't unban an address
     it("non-Moderator can't unban an address", async function () {
       await roleTestToken.addRoleToAccount(MODERATOR_ROLE, addr1.address);
       await roleTestToken.connect(addr1).banUser(addr2.address);
@@ -96,10 +96,32 @@ describe("AccessControl Contract", function () {
         // );
     });
 
-    //TODO: Test that an address with ADMIN_ROLE can send a message
-    //TODO: Test that an address with MODERATOR_ROLE can send a message
-    //TODO: Test that an address with MINTER_ROLE can send a message
-    //TODO: Test that an address with USER_ROLE can send a message
+    it("Address with ADMIN_ROLE can send a message", async function () {
+      expect(
+        await roleTestToken.sendMessageToEveryone()
+        ).to.be.equal("Hello Everyone!");
+    });
+
+    it("Address with MODERATOR_ROLE can send a message", async function () {
+      await roleTestToken.addRoleToAccount(MODERATOR_ROLE, addr1.address);
+      expect(
+        await roleTestToken.connect(addr1).sendMessageToEveryone()
+        ).to.be.equal("Hello Everyone!");
+    });
+
+    it("Address with MINTER_ROLE can send a message", async function () {
+      await roleTestToken.addRoleToAccount(MINTER_ROLE, addr1.address);
+      expect(
+        await roleTestToken.connect(addr1).sendMessageToEveryone()
+        ).to.be.equal("Hello Everyone!");
+    });
+
+    it("Address with USER_ROLE can send a message", async function () {
+      await roleTestToken.addRoleToAccount(USER_ROLE, addr1.address);
+      expect(
+        await roleTestToken.connect(addr1).sendMessageToEveryone()
+        ).to.be.equal("Hello Everyone!");
+    });
 
     //TODO: Test that an non-authorized address can't send a message reverted with "This account isn't authorized to send a message!"
 
