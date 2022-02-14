@@ -62,8 +62,10 @@ describe ("Challenge #1 Access Control", function () {
             );
         });
 
-        it("receive function call by several roles", function () {
-            expect(false).to.be.equal(true);
+        it("receive function call by several roles", async function () {
+            expect(
+                await accessControlChallenge.receiveNumber(99)
+            ).to.be.equal(99);
         });
     });
 

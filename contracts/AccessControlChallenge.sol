@@ -26,4 +26,8 @@ contract AccessControlChallenge is Ownable, AccessControl {
         return value;
     }
 
+    function receiveNumber (uint256 value) public pure returns (uint256) {
+        return value;
+    }
+
 }
