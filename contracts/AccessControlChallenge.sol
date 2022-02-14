@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: GPL-3
 
+// CHALLENGE
+// 1. 
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 
-contract AccessControlChallenge is Ownable, AccessControl {
+contract Storage is Ownable, AccessControl {
 
+    uint256 number;
     bytes32 public constant WRITER_ROLE = keccak256("WRITER_ROLE");
 
     constructor () {
@@ -22,12 +25,11 @@ contract AccessControlChallenge is Ownable, AccessControl {
         _;
     }
 
-    function storeText (string memory value) public view onlyWriter returns (string memory) {
-        return value;
+    function store(uint256 num) public onlyWriter {
+        number = num;
     }
 
-    function receiveNumber (uint256 value) public pure returns (uint256) {
-        return value;
+    function retrieve() public view returns (uint256){
+        return number;
     }
-
 }
