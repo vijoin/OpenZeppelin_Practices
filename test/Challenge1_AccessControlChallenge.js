@@ -48,11 +48,18 @@ describe ("Challenge #1 Access Control", function () {
     describe("Operations", function () {
 
         it("store function call with Writer role", async function () {
-            await expect(false).to.be.equal(true);
+            await accessControlChallenge.grantRole(WRITER_ROLE, addr1.address);
+            expect(
+                await accessControlChallenge.connect(addr1).storeText("Test string")
+            ).to.be.equal("Test string");
         });
 
-        it("reverted transaction when non-Writer calls store function", async function () {
-            await expect(false).to.be.equal(true);
+        it("reverted transaction when non-Writer calls store function", function () {
+            expect(
+                accessControlChallenge.connect(addr1).storeText("Failed Exec")
+            ).to.be.revertedWith(
+                "Only account with WRITER_ROLE can execute this!"
+            );
         });
 
         it("receive function call by several roles", async function () {

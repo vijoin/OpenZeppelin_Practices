@@ -14,4 +14,16 @@ contract AccessControlChallenge is Ownable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
+    modifier onlyWriter {
+        require(
+            hasRole(WRITER_ROLE, msg.sender),
+            "Only account with WRITER_ROLE can execute this!"
+            );
+        _;
+    }
+
+    function storeText (string memory value) public view onlyWriter returns (string memory) {
+        return value;
+    }
+
 }
