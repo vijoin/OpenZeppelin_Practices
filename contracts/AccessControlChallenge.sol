@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: GPL-3
 
 // CHALLENGE
-// 1. 
+// 1. Use Remix Storage contract
+// 2. Implement roles: ADMIN and WRITER
+// 3. ADMIN can grant or remove WRITERs
+// 4. Only WRITER can call store function
+// 5. receive function can be called by anyone
+// 6. Implement modifiers
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
