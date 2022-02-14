@@ -21,7 +21,7 @@ describe ("Challenge #1 Access Control", function () {
     describe("Contract deployment", function () {
 
         it("Contract was Created successfully", async function () {
-            await expect(
+            expect(
                 await accessControlChallenge.owner()
             ).to.be.equal(owner.address);
         });
@@ -32,13 +32,13 @@ describe ("Challenge #1 Access Control", function () {
 
         it("ADMIN can add Writers", async function () {
             await accessControlChallenge.grantRole(WRITER_ROLE, addr1.address);
-            await expect(
+            expect(
                 await accessControlChallenge.hasRole(WRITER_ROLE, addr1.address)
             ).to.be.equal(true);
         });
 
-        it("non-ADMIN can't add Writers", async function () {
-            await expect(
+        it("non-ADMIN can't add Writers", function () {
+            expect(
                 accessControlChallenge.connect(addr1).grantRole(WRITER_ROLE, addr2.address)
             ).to.be.reverted;
         });
@@ -62,8 +62,8 @@ describe ("Challenge #1 Access Control", function () {
             );
         });
 
-        it("receive function call by several roles", async function () {
-            await expect(false).to.be.equal(true);
+        it("receive function call by several roles", function () {
+            expect(false).to.be.equal(true);
         });
     });
 
