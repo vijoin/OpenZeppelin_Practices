@@ -3,10 +3,22 @@ const { ethers } = require("hardhat");
 
 describe ("Challenge #1 Access Control", function () {
 
+    let owner;
+    let AccessControlChallenge;
+    let accessControlChallenge;
+
+    beforeEach(async function () {
+        [owner, ...addrs] = await ethers.getSigners();
+        AccessControlChallenge = await ethers.getContractFactory("AccessControlChallenge")
+        accessControlChallenge = await AccessControlChallenge.deploy()
+    });
+
     describe("Contract deployment", function () {
 
         it("Contract was Created successfully", async function () {
-            expect(false).to.be.equal(true);
+            expect(
+                await accessControlChallenge.owner()
+            ).to.be.equal(owner.address);
         });
 
     });
