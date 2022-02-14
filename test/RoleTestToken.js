@@ -75,12 +75,12 @@ describe("AccessControl Contract", function () {
     });
 
     it("non-Moderator can't ban an address", async function () {
-      expect(
-        roleTestToken.banUser(addr2.address))
+      await expect(
+        roleTestToken.connect(addr1).banUser(addr2.address))
         .to.be.reverted;
-      // ).to.be.revertedWith(
-      //   `AccessControl: account ${owner.address} is missing role ${MODERATOR_ROLE}`
-        // );
+      // .to.be.revertedWith(
+      //   `AccessControl: account ${addr1.address} is missing role ${MODERATOR_ROLE}`
+      //   );
     });
 
     it("non-Moderator can't unban an address", async function () {
@@ -88,12 +88,12 @@ describe("AccessControl Contract", function () {
       await roleTestToken.connect(addr1).banUser(addr2.address);
       // console.log("addr3", addr3.address);
       
-      expect(
-        roleTestToken.connect(addr3.address).unbanUser(addr2.address))
+      await expect(
+        roleTestToken.connect(addr3).unbanUser(addr2.address))
         .to.be.reverted;
-      // ).to.be.revertedWith(
+      // .to.be.revertedWith(
       //   `AccessControl: account ${addr3.address} is missing role ${MODERATOR_ROLE}`
-        // );
+      //   );
     });
   });
 
@@ -126,16 +126,16 @@ describe("AccessControl Contract", function () {
     });
 
     it("non-authorized address can't send a message", async function () {
-      expect(
+      await expect(
         roleTestToken.connect(addr1).sendMessageToEveryone()
         ).to.be.revertedWith("This account isn't authorized to send a message!");
     });
 
     it("Banned address cannot send a message", async function () {
-      await roleTestToken.grantRole(USER_ROLE, addr1.address);
+      await roleTestToken.grantRole(USER_ROLE, addr2.address);
       await roleTestToken.grantRole(MODERATOR_ROLE, addr1.address);
       await roleTestToken.connect(addr1).banUser(addr2.address);
-      expect(
+      await expect(
         roleTestToken.connect(addr2).sendMessageToEveryone()
         ).to.be.revertedWith("This account is Banned");
     });
