@@ -79,7 +79,7 @@ describe("ERC20 Challenge", () => {
             
         });
         
-        it("non-owner can't burn", async () => {
+        it("non-owner can't burn",() => {
             expect(
                 erc20Challenge.connect(addr1).burn(1000000)
             ).to.be.revertedWith(
@@ -90,16 +90,40 @@ describe("ERC20 Challenge", () => {
 
     });
 
-    // describe("Contract Pause", () => {
-    //     // Test token pause
-    //     it("", () => {
-            
-    //     });
-    //     // Test token unpause
-    //     // Test non-owner can't pause
-    //     // Test non-owner can't unpause
+    describe("Contract Pause", () => {
+        // Test token pause
+        it("Pause Contract", async () => {
+            await erc20Challenge.pause();
+            expect(await erc20Challenge.paused()).to.be.equal(true);
+        });
 
-    // });
+        // Test token unpause
+        it("Unpause Contract", async () => {
+            await erc20Challenge.pause();
+            await erc20Challenge.unpause();
+            expect(await erc20Challenge.paused()).to.be.equal(false);
+        });
+        
+        // Test non-owner can't pause
+        it("non-owner can't Pause Contract", () => {
+            expect(
+                erc20Challenge.connect(addr1).pause()
+            ).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            );
+        });
+
+        // Test non-owner can't unpause
+        it("non-owner can't Unpause Contract", async () => {
+            await erc20Challenge.pause();
+            expect(
+                erc20Challenge.connect(addr1).unpause()
+            ).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            );
+        });
+
+    });
 
 });
 
