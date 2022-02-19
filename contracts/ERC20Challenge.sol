@@ -19,6 +19,9 @@ contract ERC20Challenge is ERC20Burnable, Ownable {
         _mint(msg.sender, 1000 * 10 ** 18);
     }
 
+    function burn(uint256 amount) onlyOwner() public override {
+        super.burn(amount);
+    }
 
 
 }

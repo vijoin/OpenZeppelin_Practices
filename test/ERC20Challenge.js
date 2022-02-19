@@ -26,7 +26,7 @@ describe("ERC20 Challenge", () => {
     let erc20Challenge;
 
     beforeEach(async () => {
-        [owner, addr2, ...addrs] = await ethers.getSigners();
+        [owner, addr1, ...addrs] = await ethers.getSigners();
         ERC20Challenge = await ethers.getContractFactory("ERC20Challenge");
         erc20Challenge = await ERC20Challenge.deploy();
         await erc20Challenge.deployed();
@@ -56,24 +56,39 @@ describe("ERC20 Challenge", () => {
         //transfer
         it("Transfer tokens to another account", async () => {
             amount = 1000000;
-            await erc20Challenge.transfer(addr2.address, amount)
-            expect(await erc20Challenge.balanceOf(addr2.address)).to.be.equal(amount);
+            await erc20Challenge.transfer(addr1.address, amount)
+            expect(await erc20Challenge.balanceOf(addr1.address)).to.be.equal(amount);
         });
 
 
 
     });
 
-    // describe("Token Burn", () => {
+    describe("Token Burn", () => {
 
-    //     // Test token Burn
-    //     it("", () => {
+        it("Burn token", async () => {
+            newAmount = "999999999999999000000"
             
-    //     });
+            await erc20Challenge.burn(1000000);
+            
+            totalSupply = (await erc20Challenge.totalSupply()).toString();
+            expect(totalSupply).to.be.equal(newAmount);
+            
+            ownerBalance = (await erc20Challenge.balanceOf(owner.address)).toString();
+            expect(ownerBalance).to.be.equal(newAmount);
+            
+        });
         
-    //     // Test non-owner can't burn
+        it("non-owner can't burn", async () => {
+            expect(
+                erc20Challenge.connect(addr1).burn(1000000)
+            ).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            );
+        });
 
-    // });
+
+    });
 
     // describe("Contract Pause", () => {
     //     // Test token pause
